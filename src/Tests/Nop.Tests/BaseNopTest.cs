@@ -184,7 +184,7 @@ namespace Nop.Tests
 
             var rootPath =
                 new DirectoryInfo(
-                        $"{Directory.GetCurrentDirectory().Split("bin")[0]}{Path.Combine(@"\..\..\Presentation\Nop.Web".Split('\\', '/').ToArray())}")
+                        $"{Directory.GetCurrentDirectory().Split("bin")[0]}{Path.Combine(@"\..\Presentation\Nop.Web".Split('\\', '/').ToArray())}")
                     .FullName;
 
             //Presentation\Nop.Web\wwwroot
