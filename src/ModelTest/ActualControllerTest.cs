@@ -18,6 +18,8 @@ using Nop.Web.Factories;
 using Nop.Web.Models.Catalog;
 using NUnit.Framework;
 using FsCheck.NUnit;
+using FsCheck;
+using System.Collections.Generic;
 
 namespace ModelTest
 {
@@ -31,7 +33,7 @@ namespace ModelTest
         private CatalogController _catalogController;
         private CatalogProductsCommand _command;
         private ICategoryService _categoryService;
-        private ViewResult _baslineResult;
+        private ViewResult _baselineResult;
 
         [OneTimeSetUp]
         public async Task Init()
@@ -219,7 +221,14 @@ namespace ModelTest
                 mediaSettings,
                 vendorSettings);
 
-            _command = new CatalogProductsCommand
+            _command = InitCommand();
+
+            _baselineResult = (ViewResult)await _catalogController.Category(CATEGORY_ID, _command);
+        }
+
+        private CatalogProductsCommand InitCommand()
+        {
+            return new CatalogProductsCommand
             {
                 PageNumber = 0,
                 PageSize = 0,
@@ -235,28 +244,94 @@ namespace ModelTest
                 OrderBy = null,
                 ViewMode = null
             };
-
-            _baslineResult = (ViewResult)await _catalogController.Category(CATEGORY_ID, _command);
         }
 
         [Test]
         public void ShouldReturnViewResult()
         {
-            Assert.IsNotNull(_baslineResult);
+            Assert.IsNotNull(_baselineResult);
         }
 
         [Test]
         public async Task ShouldPreserveModelData()
         {
             var category = await _categoryService.GetCategoryByIdAsync(CATEGORY_ID);
-            var model = (CategoryModel)_baslineResult.Model;
+            var model = (CategoryModel)_baselineResult.Model;
             PropertiesShouldEqual(category, model);
         }
 
         [Test]
         public void ShouldUseCorrectView()
         {
-            Assert.AreEqual(EXPECTED_VIEW, _baslineResult.ViewName);
+            Assert.AreEqual(EXPECTED_VIEW, _baselineResult.ViewName);
+        }
+
+        [FsCheck.NUnit.Property]
+        public bool ModelIsIndependantOfCommand(
+            int pageNumber,
+            int pageSize,
+            int totalItems,
+            int totalPages,
+            int firstItem,
+            int lastItem,
+            bool hasPreviousPage,
+            bool hasNextPage,
+            List<int> specificationOptionIds,
+            List<int> manufacturerIds,
+            int? orderBy,
+            string viewMode)
+        {
+            var testCommand = InitCommand();
+            testCommand.PageNumber = pageNumber;
+            testCommand.PageSize = pageSize;
+            testCommand.TotalItems = totalItems;
+            testCommand.TotalPages = totalPages;
+            testCommand.FirstItem = firstItem;
+            testCommand.LastItem = lastItem;
+            testCommand.HasPreviousPage = hasPreviousPage;
+            testCommand.HasNextPage = hasNextPage;
+            testCommand.SpecificationOptionIds = specificationOptionIds;
+            testCommand.ManufacturerIds = manufacturerIds;
+            testCommand.OrderBy = orderBy;
+            testCommand.ViewMode = viewMode;
+
+            var testResult = (ViewResult) _catalogController.Category(CATEGORY_ID, testCommand).Result;
+
+            return _baselineResult.Model == testResult.Model;
+        }
+
+        [FsCheck.NUnit.Property]
+        public bool ViewIsIndependantOfCommand(
+            int pageNumber,
+            int pageSize,
+            int totalItems,
+            int totalPages,
+            int firstItem,
+            int lastItem,
+            bool hasPreviousPage,
+            bool hasNextPage,
+            List<int> specificationOptionIds,
+            List<int> manufacturerIds,
+            int? orderBy,
+            string viewMode)
+        {
+            var testCommand = InitCommand();
+            testCommand.PageNumber = pageNumber;
+            testCommand.PageSize = pageSize;
+            testCommand.TotalItems = totalItems;
+            testCommand.TotalPages = totalPages;
+            testCommand.FirstItem = firstItem;
+            testCommand.LastItem = lastItem;
+            testCommand.HasPreviousPage = hasPreviousPage;
+            testCommand.HasNextPage = hasNextPage;
+            testCommand.SpecificationOptionIds = specificationOptionIds;
+            testCommand.ManufacturerIds = manufacturerIds;
+            testCommand.OrderBy = orderBy;
+            testCommand.ViewMode = viewMode;
+
+            var testResult = (ViewResult) _catalogController.Category(CATEGORY_ID, testCommand).Result;
+
+            return _baselineResult.ViewName == testResult.ViewName;
         }
     }
 }
