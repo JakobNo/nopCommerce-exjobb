@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CategoryModel\Models.csproj" />
     <ProjectReference Include="..\Presentation\Nop.Web\Nop.Web.csproj" />
     <ProjectReference Include="..\Tests\Nop.Tests\Nop.Tests.csproj" />
   </ItemGroup>
