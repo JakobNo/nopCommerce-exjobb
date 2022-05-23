@@ -18,7 +18,11 @@ namespace ModelTest
 
         public virtual async Task<IActionResult> Category(int categoryId, CatalogProductsCommand commandIgnored)
         {
-            throw new NotImplementedException();
+            string viewTemplateHardcoded = "CategoryTemplate.ProductsInGridOrLines";
+
+            var model = new CategoryModel();
+
+            return View(viewTemplateHardcoded, model);
         }
     }
 }
