@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Nop.Core.Domain.Catalog;
+using Nop.Data;
 using Nop.Web.Controllers;
 using Nop.Web.Models.Catalog;
 
@@ -11,8 +13,10 @@ namespace ModelTest
 {
     public class ModelController : BasePublicController
     {
-        public ModelController()
+        private IRepository<Category> _categoryRepository;
+        public ModelController(IRepository<Category> categoryRepository)
         {
+            _categoryRepository = categoryRepository;
 
         }
 

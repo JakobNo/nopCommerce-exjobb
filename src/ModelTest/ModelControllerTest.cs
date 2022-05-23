@@ -20,6 +20,7 @@ using NUnit.Framework;
 using FsCheck.NUnit;
 using FsCheck;
 using System.Collections.Generic;
+using Nop.Data;
 
 namespace ModelTest
 {
@@ -222,7 +223,7 @@ namespace ModelTest
                 mediaSettings,
                 vendorSettings);
             */
-            _catalogController = new ModelController();
+            _catalogController = new ModelController(GetService<IRepository<Category>>());
 
             _command = InitCommand();
 
