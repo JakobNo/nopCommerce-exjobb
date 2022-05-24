@@ -13,18 +13,34 @@ namespace ModelTest
 {
     public class ModelController : BasePublicController
     {
-        private IRepository<Category> _categoryRepository;
-        public ModelController(IRepository<Category> categoryRepository)
+        private INopDataProvider _dataProvider;
+        public ModelController(INopDataProvider dataProvider)
         {
-            _categoryRepository = categoryRepository;
-
+            _dataProvider = dataProvider;
         }
 
         public virtual async Task<IActionResult> Category(int categoryId, CatalogProductsCommand commandIgnored)
         {
             string viewTemplateHardcoded = "CategoryTemplate.ProductsInGridOrLines";
 
-            var model = new CategoryModel();
+            var categoryTable = _dataProvider.GetTable<Category>();
+
+            var query =
+                from cat in categoryTable
+                where cat.Id == categoryId
+                select cat;
+
+            var category = query.FirstOrDefault<Category>();
+
+            var model = new CategoryModel
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description,
+                MetaKeywords = category.MetaKeywords, 
+                MetaDescription = category.MetaDescription,
+                MetaTitle = category.MetaTitle,
+            };
 
             return View(viewTemplateHardcoded, model);
         }

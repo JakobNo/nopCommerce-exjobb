@@ -223,7 +223,8 @@ namespace ModelTest
                 mediaSettings,
                 vendorSettings);
             */
-            _catalogController = new ModelController(GetService<IRepository<Category>>());
+            _catalogController = new ModelController(GetService<IDataProviderManager>().DataProvider);
+
 
             _command = InitCommand();
 
