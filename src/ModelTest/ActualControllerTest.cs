@@ -24,7 +24,7 @@ using System.Collections.Generic;
 namespace ModelTest
 {
     [TestFixture]
-    public class Tests : BaseNopTest
+    public class ModelControllerTests : BaseNopTest
     {
 
         private const int CATEGORY_ID = 1;
